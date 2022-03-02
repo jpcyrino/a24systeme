@@ -1,0 +1,45 @@
+routes
+
+
+LOGON GETS:
+
+/a24systeme/logon/{key} 
+-- return user data
+
+/a24systeme/activate/{registry}
+-- if key is set, return nothing
+
+
+ASSIGNMENTS:
+
+/a24systeme/assignment			GET
+/a24systeme/assignment			POST
+
+/a24systeme/assignment/{id}		GET
+/a24systeme/assignment/{id}		PUT
+/a24systeme/assignment/{id}		DELETE
+
+
+FULLFILLMENTS:
+
+/a24systeme/fullfillment 							GET
+/a24systeme/fullfillment/user/{user}				GET
+/a24systeme/fullfillment/assignment/{assignment}	GET
+
+/a24systeme/fullfillment 					POST
+/a24systeme/fullfillment/{id}				GET
+/a24systeme/fullfillment/{id}				PUT
+/a24systeme/fullfillment/{id}				DELETE
+
+
+REVIEWS:
+
+/a24systeme/review 							GET
+/a24systeme/review/tutor/{id}				GET
+
+/a24systeme/review 							POST
+/a24systeme/review/{id}						GET
+/a24systeme/review/{id}						PUT
+/a24systeme/review/{id}						DELETE
+
+
