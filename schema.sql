@@ -24,8 +24,7 @@ CREATE TABLE assignment (
 	content TEXT,
 	creator UUID REFERENCES users (id),
 	created TIMESTAMP,
-	updated TIMESTAMP,
-	UNIQUE (creator)
+	updated TIMESTAMP
 );
 
 CREATE TABLE fullfillment (

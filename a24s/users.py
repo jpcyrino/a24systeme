@@ -19,33 +19,34 @@ def query_insert_user(user_dict):
 			INSERT INTO users (id,name,registry,period,role,created) 
 			VALUES (%s,%s,%s,%s,%s,%s);
 			"""
-	data = (
-		str(uuid4()),
-		user_dict['name'],
-		user_dict['registry'],
-		user_dict['period'],
-		user_dict['role'],
-		user_dict['created']
-		)
+	try:
+		data = (
+			str(uuid4()),
+			user_dict['name'],
+			user_dict['registry'],
+			user_dict['period'],
+			user_dict['role'],
+			user_dict['created']
+			)
+	except:
+		abort(400)
 
 	return (query, data)
 
 def exec_insert_user(user_dict):
 	query, data = query_insert_user(user_dict)
+	execute, *_ = DBFactory().start()
 	try:
-		execute, disconnect, *_ = DBFactory().start()
 		execute(query,data)
-		disconnect()
 	except:
 		abort(500)
 
 def exec_insert_users(user_list):
+	execute, *_ = DBFactory().start()
 	try:
-		execute, disconnect, *_ = DBFactory().start()
 		for user in user_list:
 			query, data = query_insert_user(user)
 			execute(query,data)
-		disconnect()
 	except:
 		abort(500)
 		
@@ -54,10 +55,9 @@ def exec_get_user(user_id):
 	if type(user_id) is not UUID:
 		user_id = UUID(user_id)
 	query = "SELECT * FROM users WHERE id=%s;"
+	_, fetch, _ = DBFactory().start()
 	try:
-		_, disconnect, fetch, _ = DBFactory().start()
 		data = fetch(query, (user_id, ))
-		disconnect()
 		return dict(zip(user_column_names,data))
 	except:
 		abort(500)
@@ -66,10 +66,9 @@ def exec_get_user(user_id):
 def exec_get_users():
 	register_uuid()
 	query = "SELECT * FROM users;"
+	_, _, fetchall = DBFactory().start()
 	try:
-		_, disconnect, _, fetchall = DBFactory().start()
 		data = fetchall(query)
-		disconnect()
 		return [dict(zip(user_column_names,d)) for d in data]
 	except:
 		abort(500)

@@ -1,4 +1,4 @@
-from a24s.users import exec_insert_users
+﻿from a24s.users import exec_insert_users
 
 J = {
 	'name': 'João Paulo Lazzarini Cyrino', 
