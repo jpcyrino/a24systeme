@@ -84,3 +84,13 @@ def start(app):
     def deactivate_assignment_by_id(assignment_id):
         authorize_not_student()
         return exec_activate_assignment(assignment_id,active=False)
+
+    @app.route('/fullfillments', methods=["GET", "POST"])
+    def get_fullfillments():
+        pass
+
+    @app.route('/fullfillments/<uuid:fullfillment_id>', methods=["GET", "POST"])
+    def get_fullfillments_by_id(fullfillment_id):
+        pass
+
+        

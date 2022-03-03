@@ -13,25 +13,19 @@ def create_access_key(registry, skip_check=False):
 	execute, *_ = DBFactory().start()
 	access_key = uuid4()
 	query = "UPDATE users SET access_key = %s, access_key_updated = %s WHERE registry = %s;"
-	try:
-		data = (access_key, datetime.now(), registry)
-		execute(query, data)
-		return access_key
-	except: 
-		abort(500)
+	data = (access_key, datetime.now(), registry)
+	execute(query, data)
+	return access_key
 
 def check_access_key_exists(registry):
 	register_uuid()
 	_, fetch, _ = DBFactory().start()
 	query = "SELECT access_key FROM users WHERE registry = %s;"
 	data = (registry, )
-	try:
-		response = fetch(query,data)
-		if (response == (None, )) or (response is None):
-			return False
-		return True
-	except:
-		abort(500)
+	response = fetch(query,data)
+	if (response == (None, )) or (response is None):
+		return False
+	return True
 
 def get_user_by_access_key(access_key):
 	register_uuid()
@@ -43,12 +37,7 @@ def get_user_by_access_key(access_key):
 	_, fetch, _ = DBFactory().start()
 	query = "SELECT * FROM users WHERE access_key = %s;"
 	data = (access_key, )
-	try:
-		response = fetch(query, data)
-		if response is None:
-			return False
-		return dict(zip(user_column_names, response))
-	except:
-		abort(500)
-
-
+	response = fetch(query, data)
+	if response is None:
+		return False
+	return dict(zip(user_column_names, response))

@@ -36,19 +36,13 @@ def query_insert_user(user_dict):
 def exec_insert_user(user_dict):
 	query, data = query_insert_user(user_dict)
 	execute, *_ = DBFactory().start()
-	try:
-		execute(query,data)
-	except:
-		abort(500)
+	execute(query,data)
 
 def exec_insert_users(user_list):
 	execute, *_ = DBFactory().start()
-	try:
-		for user in user_list:
-			query, data = query_insert_user(user)
-			execute(query,data)
-	except:
-		abort(500)
+	for user in user_list:
+		query, data = query_insert_user(user)
+		execute(query,data)
 		
 def exec_get_user(user_id):
 	register_uuid()
@@ -56,20 +50,14 @@ def exec_get_user(user_id):
 		user_id = UUID(user_id)
 	query = "SELECT * FROM users WHERE id=%s;"
 	_, fetch, _ = DBFactory().start()
-	try:
-		data = fetch(query, (user_id, ))
-		return dict(zip(user_column_names,data))
-	except:
-		abort(500)
-		
+	data = fetch(query, (user_id, ))
+	return dict(zip(user_column_names,data))
 
 def exec_get_users():
 	register_uuid()
 	query = "SELECT * FROM users;"
 	_, _, fetchall = DBFactory().start()
-	try:
-		data = fetchall(query)
-		return [dict(zip(user_column_names,d)) for d in data]
-	except:
-		abort(500)
+	data = fetchall(query)
+	return [dict(zip(user_column_names,d)) for d in data]
+
 
