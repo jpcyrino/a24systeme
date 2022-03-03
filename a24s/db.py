@@ -8,34 +8,34 @@ class Postgres():
 
 	def connect(self):
 		if self.connection is None:
-			try:
-				self.connection = psql.connect(f"dbname={self.db_name} user={self.user}")
-			except:
-				# S'occuper des erreurs d'une manière meilleure
-				return False
-		return True
+			self.connection = psql.connect(f"dbname={self.db_name} user={self.user}")
+
+	def fetch(self,*query):
+		if self.connection is None:
+			self.connect()
+		with self.connection.cursor() as cur:
+			cur.execute(*query)
+			data = cur.fetchone()
+		return data
+
+	def fetchall(self,*query):
+		if self.connection is None:
+			self.connect()
+		with self.connection.cursor() as cur:
+			cur.execute(*query)
+			data = cur.fetchall()
+		return data
 
 	def disconnect(self):
 		if self.connection is not None:
-			try:
-				self.connection.close()
-			except:
-				# S'occuper des erreurs d'une manière meilleure
-				return False
-		return True
+			self.connection.close()
 
 	def execute(self,*query):
 		if self.connection is None:
-			if not self.connect(): 
-				return False
+			self.connect()
 		with self.connection.cursor() as cur:
-			try: 
-				cur.execute(*query)
-				self.connection.commit()
-			except: 
-				return False 
-		return True
-
+			cur.execute(*query)
+			self.connection.commit()
 
 standard_connection = {"db_name" : "a24systeme", "user" : "postgres"}
 
@@ -46,11 +46,8 @@ class DBFactory():
 		
 
 	def start(self):
-		try:
-			self.db.connect()
-			return (self.db.execute, self.db.disconnect)
-		except:
-			return False 
+		self.db.connect()
+		return (self.db.execute, self.db.disconnect, self.db.fetch, self.db.fetchall)
 
 
 def build_schema(sql_file, Database=Postgres, conf=standard_connection):

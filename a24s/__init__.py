@@ -1,18 +1,29 @@
 import os
+from .logon import get_user_by_access_key, create_access_key
+from werkzeug.exceptions import abort
 
 def start(app):
     app.config.from_mapping(
-        SECRET_KEY='dev'
+        SECRET_KEY='dev',
+        SECRET='nuunu'
     )
 
     app.config.from_pyfile('config.py', silent=True)
 
-    # a simple page that says hello
-    @app.route('/logon/<ukey>')
+    @app.route('/logon/<uuid:ukey>')
     def logon_with_user_key(ukey):
-        if ukey == '01d06ad4-a0ea-46fb-8029-bf9d9a3efc60':
-            return {
-                "name": "test",
-                "key" : ukey
-            }
-        return f"<p>Key is {ukey} and is {ukey == '01d06ad4-a0ea-46fb-8029-bf9d9a3efc60'}</p>"
+        print(ukey)
+        result = get_user_by_access_key(ukey)
+        return result if result else ""
+
+    @app.route('/activate/<int:registry>')
+    def activate_user_access_key(registry):
+        result = create_access_key(registry)
+        return {"access_key" : result} if result else ""
+
+    @app.route('/activate/<secret>/<int:registry>')
+    def activate_user_access_key_anyway(secret,registry):
+        if secret == app.config["SECRET"]:
+            result = create_access_key(registry, skip_check=True)
+            return {"access_key" : result} if result else ""
+        raise(400)

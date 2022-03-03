@@ -41,5 +41,3 @@ REVIEWS:
 /a24systeme/review/{id}						GET
 /a24systeme/review/{id}						PUT
 /a24systeme/review/{id}						DELETE
-
-

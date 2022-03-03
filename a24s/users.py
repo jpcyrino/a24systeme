@@ -1,12 +1,24 @@
 from .db import DBFactory
-from uuid import uuid4
+from uuid import uuid4, UUID
+from psycopg2.extras import register_uuid
+from werkzeug.exceptions import abort
+
+user_column_names = (
+	'id',
+	'name',
+	'registry',
+	'period',
+	'role',
+	'access_key',
+	'access_key_updated',
+	'created'
+	)
 
 def query_insert_user(user_dict):
 	query = """
 			INSERT INTO users (id,name,registry,period,role,created) 
 			VALUES (%s,%s,%s,%s,%s,%s);
 			"""
-
 	data = (
 		str(uuid4()),
 		user_dict['name'],
@@ -18,21 +30,47 @@ def query_insert_user(user_dict):
 
 	return (query, data)
 
-
-
 def exec_insert_user(user_dict):
 	query, data = query_insert_user(user_dict)
-	execute, disconnect = DBFactory().start()
-	execute(query,data)
-	disconnect()
+	try:
+		execute, disconnect, *_ = DBFactory().start()
+		execute(query,data)
+		disconnect()
+	except:
+		abort(500)
 
 def exec_insert_users(user_list):
-	execute, disconnect = DBFactory().start()
-	for user in user_list:
-		query, data = query_insert_user(user)
-		execute(query,data)
-	disconnect()
+	try:
+		execute, disconnect, *_ = DBFactory().start()
+		for user in user_list:
+			query, data = query_insert_user(user)
+			execute(query,data)
+		disconnect()
+	except:
+		abort(500)
+		
+def exec_get_user(user_id):
+	register_uuid()
+	if type(user_id) is not UUID:
+		user_id = UUID(user_id)
+	query = "SELECT * FROM users WHERE id=%s;"
+	try:
+		_, disconnect, fetch, _ = DBFactory().start()
+		data = fetch(query, (user_id, ))
+		disconnect()
+		return dict(zip(user_column_names,data))
+	except:
+		abort(500)
+		
 
-
-
+def exec_get_users():
+	register_uuid()
+	query = "SELECT * FROM users;"
+	try:
+		_, disconnect, _, fetchall = DBFactory().start()
+		data = fetchall(query)
+		disconnect()
+		return [dict(zip(user_column_names,d)) for d in data]
+	except:
+		abort(500)
 
