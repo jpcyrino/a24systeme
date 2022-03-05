@@ -5,9 +5,11 @@ from .assignments import *
 from .fullfillments import *
 from .reviews import *
 from flask import jsonify, request, Response
+from flask_cors import CORS
 from werkzeug.exceptions import abort
 
 def start(app):
+    CORS(app)
     app.config.from_mapping(
         SECRET_KEY='dev',
         SECRET='nuunu'
@@ -36,12 +38,12 @@ def start(app):
     def logon_with_user_key(ukey):
         print(ukey)
         result = get_user_by_access_key(ukey)
-        return result if result else ""
+        return result if result else ('',204)
 
     @app.route('/activate/<int:registry>')
     def activate_user_access_key(registry):
         result = create_access_key(registry)
-        return {"access_key" : result} if result else ""
+        return {"access_key" : result} if result else ('',204)
 
     @app.route('/activate/<secret>/<int:registry>')
     def activate_user_access_key_anyway(secret,registry):

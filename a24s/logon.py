@@ -8,6 +8,8 @@ from werkzeug.exceptions import abort
 
 def create_access_key(registry, skip_check=False):
 	register_uuid()
+	if not check_user_exists(registry):
+		abort(400)
 	if (not skip_check) and check_access_key_exists(registry):
 		return False
 	execute, *_ = DBFactory().start()
@@ -16,6 +18,15 @@ def create_access_key(registry, skip_check=False):
 	data = (access_key, datetime.now(), registry)
 	execute(query, data)
 	return access_key
+
+def check_user_exists(registry):
+	query = "SELECT * FROM users WHERE registry=%s;"
+	data = (registry, )
+	_, fetch,_ = DBFactory().start()
+	response = fetch(query,data)
+	if response is None: 
+		return False
+	return True
 
 def check_access_key_exists(registry):
 	register_uuid()
