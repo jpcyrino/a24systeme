@@ -37,6 +37,7 @@ def exec_insert_user(user_dict):
 	query, data = query_insert_user(user_dict)
 	execute, *_ = DBFactory().start()
 	execute(query,data)
+	return { "id" : data[0]}
 
 def exec_insert_users(user_list):
 	execute, *_ = DBFactory().start()

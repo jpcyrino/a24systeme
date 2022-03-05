@@ -2,6 +2,8 @@ import os
 from .logon import *
 from .users import *
 from .assignments import *
+from .fullfillments import *
+from .reviews import *
 from flask import jsonify, request, Response
 from werkzeug.exceptions import abort
 
@@ -55,6 +57,13 @@ def start(app):
             return jsonify(result)
         abort(401)
 
+    @app.route('/users', methods=["GET","POST"]):
+    def get_users():
+        if request.method=="POST":
+            json = request.get_json()
+            return exec_insert_user(json)
+        return exec_get_users()
+
     @app.route('/assignments', methods=["GET","POST"])
     def get_assignments():
         authorize_not_student()
@@ -87,10 +96,54 @@ def start(app):
 
     @app.route('/fullfillments', methods=["GET", "POST"])
     def get_fullfillments():
-        pass
+        authorize()
+        if request.method == "POST":
+            json = request.get_json()
+            return exec_create_fullfillment(json)
+        return jsonify(exec_get_fullfillments())
 
-    @app.route('/fullfillments/<uuid:fullfillment_id>', methods=["GET", "POST"])
+    @app.route('/fullfillments/<uuid:fullfillment_id>', methods=["GET", "PUT", "DELETE"])
     def get_fullfillments_by_id(fullfillment_id):
-        pass
+        if request.method == "DELETE":
+            authorize_not_student()
+            return exec_delete_fullfillment(fullfillment_id)
+        authorize()
+        if request.method == "PUT":
+            json = request.get_json()
+            return exec_update_fullfillment(fullfillment_id,json)
+        return exec_get_fullfillment(fullfillment_id)
+    
+    @app.route('/fullfillments/user/<uuid:user_id>')
+    def get_fullfillments_by_user_id(user_id):
+        return jsonify(exec_get_fullfillments_by_user_id(user_id))
 
+    @app.route('/reviews')
+    def get_reviews():
+        authorize_not_student()
+        return jsonify(exec_get_reviews())
+
+    @app.route('/reviews/<uuid:review_id>', methods=["GET", "PUT", "DELETE"])
+    def get_reviews_by_id(review_id):
+        if request.method=="GET":
+            authorize()
+            return exec_get_review(review_id)
+        authorize_not_student()
+        if request.method=="DELETE":
+            return exec_delete_review(review_id)
+        json = request.get_json()
+        return exec_update_review(review_id, json)
+
+    @app.route('/reviews/reviewer/<uuid:user_id>')
+    def get_reviews_by_reviewer_id(user_id):
+        authorize_not_student()
+        return jsonify(exec_get_reviews_by_reviewer_id(user_id))
+
+    @app.route('/reviews/fullfillment/<uuid:fullfillment_id>')
+    def get_review_by_fullfillment_id(fullfillment_id):
+        authorize()
+        return exec_get_review_by_fullfillment_id(fullfillment_id)
         
+    @app.route('/reviews/send/<uuid:review_id>', method=["PUT"])
+    def send_review(review_id):
+        authorize_not_student()
+        return exec_send_review(review_id)
