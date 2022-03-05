@@ -2,6 +2,7 @@ from .db import DBFactory
 from uuid import uuid4, UUID
 from psycopg2.extras import register_uuid
 from werkzeug.exceptions import abort
+from datetime import datetime
 
 user_column_names = (
 	'id',
@@ -15,18 +16,19 @@ user_column_names = (
 	)
 
 def query_insert_user(user_dict):
+	register_uuid()
 	query = """
 			INSERT INTO users (id,name,registry,period,role,created) 
 			VALUES (%s,%s,%s,%s,%s,%s);
 			"""
 	try:
 		data = (
-			str(uuid4()),
-			user_dict['name'],
-			user_dict['registry'],
-			user_dict['period'],
-			user_dict['role'],
-			user_dict['created']
+			uuid4(),
+			user_dict["name"],
+			user_dict["registry"],
+			user_dict["period"],
+			user_dict["role"],
+			datetime.now()
 			)
 	except:
 		abort(400)

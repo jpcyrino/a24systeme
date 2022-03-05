@@ -21,12 +21,12 @@ def _get_tutor_with_least_fullfillments_to_review():
 
 def exec_create_review_for_fullfillment(fullfillment_id):
 	register_uuid()
-	if type(review_id) is not UUID:
-		UUID(review_id)
+	if type(fullfillment_id) is not UUID:
+		UUID(fullfillment_id)
 	reviewer_id = _get_tutor_with_least_fullfillments_to_review()
 	review_id = uuid4()
 	query = """
-			INSERT INTO fullfillment (id,fullfillment,reviewer,created) 
+			INSERT INTO review (id,fullfillment,reviewer,created) 
 			VALUES (%s, %s, %s,%s);
 			"""
 	data = (review_id,fullfillment_id,reviewer_id,datetime.now())

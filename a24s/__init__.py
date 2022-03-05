@@ -57,17 +57,17 @@ def start(app):
             return jsonify(result)
         abort(401)
 
-    @app.route('/users', methods=["GET","POST"]):
+    @app.route('/users', methods=["GET","POST"])
     def get_users():
         if request.method=="POST":
             json = request.get_json()
             return exec_insert_user(json)
-        return exec_get_users()
+        return jsonify(exec_get_users())
 
     @app.route('/assignments', methods=["GET","POST"])
     def get_assignments():
-        authorize_not_student()
         if request.method == "POST":
+            authorize_not_student()
             json = request.get_json()
             return exec_create_assignment(json)
         return jsonify(exec_get_assignments())
@@ -143,7 +143,7 @@ def start(app):
         authorize()
         return exec_get_review_by_fullfillment_id(fullfillment_id)
         
-    @app.route('/reviews/send/<uuid:review_id>', method=["PUT"])
+    @app.route('/reviews/send/<uuid:review_id>', methods=["PUT"])
     def send_review(review_id):
         authorize_not_student()
         return exec_send_review(review_id)

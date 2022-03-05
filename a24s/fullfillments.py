@@ -27,7 +27,7 @@ def exec_create_fullfillment(fullfillment_dict):
 		data=(
 			fullfillment_id,
 			fullfillment_dict["assignment"],
-			fullfillment_dict["student"]
+			fullfillment_dict["student"],
 			fullfillment_dict["content"],
 			datetime.now()
 			)
