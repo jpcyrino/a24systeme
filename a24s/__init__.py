@@ -72,6 +72,7 @@ def start(app):
             authorize_not_student()
             json = request.get_json()
             return exec_create_assignment(json)
+        authorize()
         return jsonify(exec_get_assignments())
 
     @app.route('/assignments/<uuid:assignment_id>', methods=["GET","PUT","DELETE"])

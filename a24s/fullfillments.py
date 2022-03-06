@@ -48,8 +48,8 @@ def exec_get_fullfillments():
 
 def exec_get_fullfillments_by_user_id(user_id):
 	register_uuid()
-	if type(fullfillment_id) is not UUID:
-		UUID(fullfillment_id)
+	if type(user_id) is not UUID:
+		UUID(user_id)
 	query = "SELECT * FROM fullfillment WHERE student=%s;"
 	data = (user_id, )
 	_, _, fetchall = DBFactory().start()

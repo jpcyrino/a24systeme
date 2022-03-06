@@ -83,7 +83,7 @@ def exec_get_review_by_fullfillment_id(fullfillment_id):
 	query = "SELECT * FROM review WHERE fullfillment=%s;"
 	data = (fullfillment_id, )
 	_,fetch,_ = DBFactory().start()
-	response = fetchall(query,data)
+	response = fetch(query,data)
 	if response is None:
 		return ('',204)
 	return dict(zip(review_column_names,response))
